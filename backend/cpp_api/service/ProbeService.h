@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <set>
+
 #include "ws/IMicroService.h"
 #include "ws/resources/DirResourceHandler.h"
 #include "ws/resources/ResourceBuffering.h"
@@ -8,14 +11,16 @@
 #include "ws/resources/GraphResourceHandlerBuilder.h"
 #include "ws/resources/DataTableResourceHandler.h"
 #include "ws/resources/DataTableResourceHandlerBuilder.h"
-#include "sdrapi/probes.h"
 
-class ServerService : public ws::IMicroService
+inline std::set<std::string> PROBE_SERVICE_PROBES_ID;
+
+class ProbeService : public ws::IMicroService
 {
 
 public:
 
-	shared_ptr<ws::ResourceBuffering<float>> get_probe_buffering(const string& probe_id);
+	shared_ptr<ws::ResourceBuffering<float>> 
+		get_probe_buffering(const string& probe_id);
 	void start() final;
 	void stop() final;
 	shared_ptr<ws::IResourceHandler> get_resource_tree() final;
@@ -29,20 +34,21 @@ private:
 
 };
 
-inline shared_ptr<ws::ResourceBuffering<float>> ServerService::get_probe_buffering(const string& probe_id)
+inline shared_ptr<ws::ResourceBuffering<float>> 
+ProbeService::get_probe_buffering(const string& probe_id)
 {
 	return _probes_buffer[probe_id];
 }
 
-inline void ServerService::start()
+inline void ProbeService::start()
 {
 }
 
-inline void ServerService::stop()
+inline void ProbeService::stop()
 {
 }
 
-inline shared_ptr<ws::IResourceHandler> ServerService::get_resource_tree()
+inline shared_ptr<ws::IResourceHandler> ProbeService::get_resource_tree()
 {
 	auto resource_factory{ make_shared<ws::ResourceFactory>() };
 
@@ -50,7 +56,7 @@ inline shared_ptr<ws::IResourceHandler> ServerService::get_resource_tree()
 		.name("probes")
 		.build();
 
-	for (const auto& _1d_probe : SERVER_SERVICE_PROBES_ID) {
+	for (const auto& _1d_probe : PROBE_SERVICE_PROBES_ID) {
 		auto buffer_ = make_shared<ws::ResourceBuffering<float>>(_buffering_size);
 		_probes_buffer[_1d_probe] = buffer_;
 

@@ -5,39 +5,19 @@
 #include <algorithm>
 #include <cmath>
 
-#include "sdrapi/SdrApi.h"
+#include "WebProbeApi.h"
 
 using namespace std;
 
-int main(int argc, char** argv) 
-{
-	INIT_SDR_API();
+void generate_probe_x_data();
 
-	auto thd { 
-		thread(
-			[&](){
-				vector<float> probe_x_data(65536, 0.0f);
-				int idx{ 0 };
-				while (true)
-				{
-					for_each(
-						probe_x_data.begin(), 
-						probe_x_data.end(),
-						[&](auto& elem){
-							elem = sin(idx / 1000.0);
-							idx++;
-						}
-					);
-					FEED_GRAPH_PROBE(
-						probe_x, 
-						probe_x_data.data(), 
-						probe_x_data.size() * sizeof(float)
-					);
-					this_thread::sleep_for(std::chrono::milliseconds(100));
-				}
-			}
-		)
-	};
+int main(int argc, char **argv)
+{
+	INIT_PROBE_ID(probe_x);
+
+	START_WEB_PROBE_API();
+
+	auto thd_x{ thread(generate_probe_x_data) };
 
 	string cmd;
 	cin >> cmd;
@@ -46,5 +26,29 @@ int main(int argc, char** argv)
 		cin >> cmd;
 	}
 
+	STOP_WEB_PROBE_API();
+
 	return 0;
+}
+
+inline void generate_probe_x_data()
+{
+	vector<float> probe_x_data(65536, 0.0f);
+	int idx{0};
+	while (true)
+	{
+		for_each(
+			probe_x_data.begin(),
+			probe_x_data.end(),
+			[&](auto &elem)
+			{
+				elem = static_cast<float>(sin(idx / 1000.0));
+				idx++;
+			});
+		FEED_GRAPH_PROBE(
+			probe_x,
+			probe_x_data.data(),
+			probe_x_data.size() * sizeof(float));
+		this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
 }

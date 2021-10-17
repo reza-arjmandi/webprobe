@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IResourceFactory.h"
-#include "Resource.h";
+#include "Resource.h"
 
 namespace ws
 {
