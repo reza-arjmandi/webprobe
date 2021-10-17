@@ -1,0 +1,9 @@
+export const START_SERVER_URI = '/server/start';
+export const START_JOB_URI = '/server/job/start';
+export const ENABLE_OFFLINE_URI = '/server/virtual_card/enable';
+export const SELECT_ANTENNA_URI = '/server/virtual_card/selected_antenna';
+export const SELECT_MODE_URI = '/server/virtual_card/mode';
+export const PROBE_1_URI = '/server/probe_1';
+export const PROBE_2_URI = '/server/probe_2';
+export const PROBE_3_URI = '/server/probe_3';
+export const PROBE_BASE_URI = '/server/probes';
